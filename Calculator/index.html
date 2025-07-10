@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Calculator - Codsoft (Task-3)</title>
+</head>
+<body>
+    <div class="Informaition">
+        <h1>Basic Calculator-- by Tilak Dalai ( Task Level-3 )</h1>
+        <p>A simple calculator built with HTML, CSS, and JavaScript</p>
+        <p>Click the buttons to perform calculations</p>
+       
+    </div>
+    <div class="container">
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="clear" id="clear">C</button>
+            <button class="operator" data-op="/">÷</button>
+            <button class="operator" data-op="*">×</button>
+            <button class="operator" data-op="-">−</button>
+            <button data-num="7">7</button>
+            <button data-num="8">8</button>
+            <button data-num="9">9</button>
+            <button class="operator" data-op="+">+</button>
+            <button data-num="4">4</button>
+            <button data-num="5">5</button>
+            <button data-num="6">6</button>
+            <button class="clear" id="erase">⌫</button>
+            <button data-num="1">1</button>
+            <button data-num="2">2</button>
+            <button data-num="3">3</button>
+            <button class="operator1" id="equal">=</button>
+            <button data-num="0" style="grid-column: span 2;">0</button>
+            <button data-num=".">.</button>
+        </div>
+    </div>
+</div>
+    <script>
+        const display = document.getElementById('display');
+        const buttons = document.querySelectorAll('.buttons button');
+        let currentInput = '';
+        let operator = '';
+        let operand1 = null;
+        let operand2 = null;
+        let resultDisplayed = false;
+
+        function updateDisplay(value) {
+            display.textContent = value;
+        }
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.hasAttribute('data-num')) {
+                    if (resultDisplayed) {
+                        currentInput = '';
+                        resultDisplayed = false;
+                    }
+                    if (btn.getAttribute('data-num') === '.' && currentInput.includes('.')) return;
+                    currentInput += btn.getAttribute('data-num');
+                    updateDisplay(currentInput);
+                } else if (btn.classList.contains('operator')) {
+                    if (currentInput === '' && operand1 === null) return;
+                    if (operand1 === null) {
+                        operand1 = parseFloat(currentInput);
+                    } else if (operator && currentInput !== '') {
+                        operand2 = parseFloat(currentInput);
+                        operand1 = calculate(operand1, operand2, operator);
+                        updateDisplay(operand1);
+                    }
+                    operator = btn.getAttribute('data-op');
+                    currentInput = '';
+                } else if (btn.id === 'equal') {
+                    if (operator && currentInput !== '') {
+                        operand2 = parseFloat(currentInput);
+                        let result = calculate(operand1, operand2, operator);
+                        updateDisplay(result);
+                        operand1 = result;
+                        operator = '';
+                        currentInput = '';
+                        resultDisplayed = true;
+                    }
+                } else if (btn.id === 'clear') {
+                    currentInput = '';
+                    operator = '';
+                    operand1 = null;
+                    operand2 = null;
+                    updateDisplay('0');
+                } else if (btn.id === 'erase') {
+                    if (currentInput.length > 0) {
+                        currentInput = currentInput.slice(0, -1);
+                        updateDisplay(currentInput || '0');
+                    }
+                }
+            });
+        });
+        function calculate(a, b, op) {
+            if (op === '+') return a + b;
+            if (op === '-') return a - b;
+            if (op === '*') return a * b;
+            if (op === '/') return b === 0 ? 'Error' : a / b;
+            return b;
+        }
+    </script>
+</body>
+
+</html>
